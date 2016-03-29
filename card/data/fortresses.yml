@@ -1,0 +1,40 @@
+- Name: "The Iron Keep"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - fortress
+    - structure
+    - income
+  TraitExps:
+    - Exp: gold_producer:ally:4
+      Targets: personaility
+      Name: Swing
+      Description:
+    - Exp: armor_aura
+      Targets: personaility
+      Name: Swing
+      Description:
+- Name: "Ninja Castle"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - fortress
+    - structure
+    - income
+  TraitExps:
+    - Exp: if {{Lifeforce}} > 4 | bow | credit:3
+      Targets: personaility
+      Name: Swing
+      Description:
+    - Exp: charge:4 | summon
+      Targets: personaility
+      Name: Swing
+      Description:
+    - Exp: charge:2 | cast:smoke
+      Targets: personaility
+      Name: Swing
+      Description:

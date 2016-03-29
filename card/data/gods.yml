@@ -1,0 +1,34 @@
+- Name: "Son of Jhova"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - god
+    - devinity
+  TraitExps:
+    - Exp: spirit_producer:ally:3
+      Targets: personaility
+      Name: Swing
+      Description:
+    - Exp: consume:2 | damage:4
+      Targets: personaility
+      Name: Swing
+      Description:
+- Name: "Dragon Khan"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - god
+    - devinity
+  TraitExps:
+    - Exp: spirit_producer:ally:4
+      Targets: personaility
+      Name: Swing
+      Description:
+    - Exp: consume:2 | pick:enemy
+      Targets: personaility
+      Name: Swing
+      Description:

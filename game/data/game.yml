@@ -1,0 +1,10 @@
+Fortresses:
+  Path: card/data/fortresses.yml
+Gods:
+  Path: card/data/gods.yml
+Decks:
+  Path: card/data/factions
+# Effects:
+#   path: game/data/effects.yml
+Traits:
+  path: game/data/traits.yml

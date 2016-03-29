@@ -1,0 +1,66 @@
+##
+##
+credit:
+  tags:
+    - all
+    - enemy
+    - ally
+  effect:
+    - change:gold:$1
+##
+##
+charge:
+  tags:
+    - all
+    - enemy
+    - ally
+  effect:
+    - chage:gold:-$1
+# ##
+# ##
+# armor_aura:
+#   tags:
+#     - personaility
+#     - structure
+#     - fortress
+#   effect:
+#     - change:armor:$1
+# ##
+# ##
+# pick:
+#   tags:
+#     - all
+#     - enemy
+#     - ally
+#     - dead
+#     - inplay
+#   effect:
+#     - locate_card:decks | hand
+# ##
+# ##
+# summon:
+#   tags:
+#     - all
+#     - enemy
+#     - ally
+#     - dead
+#   effect:
+#     - locate_card:decks | play
+# ##
+# ##
+# spawn:
+#   tags:
+#   effect:
+#     - create:$1 | play
+# ##
+# ##
+# damage:
+#   tags:
+#   effect:
+#     - create:$1 | play
+# ##
+# ##
+# kill:
+#   tags:
+#   effect:
+#     - discard

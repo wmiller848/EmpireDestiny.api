@@ -1,0 +1,21 @@
+- Name: "Word of The Lord"
+  Props:
+    cost: 2
+  Tags:
+    - avatar
+  TraitExps:
+    - Exp: damage:2 | discard
+      Targets: personaility
+      Name: Sacrafice
+      Description: Damage any {{Targets}}
+- Name: "Thrust of the Tiger"
+  Props:
+    cost: 2
+  Tags:
+    - avatar
+  TraitExps:
+    ## blow up card and discard
+    - Exp: consume:1 | pick:enemy | kill | discard
+      Targets: personaility
+      Name: Sacrafice
+      Description: Kill any {{Targets}}

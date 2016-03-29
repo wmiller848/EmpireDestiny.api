@@ -1,0 +1,35 @@
+change:
+  keys:
+    - attackpower
+    - armor
+    - lifeforce
+    - gold
+    - spirit
+set:
+  keys:
+    - properties
+    - attackpower
+    - armor
+    - lifeforce
+    - gold
+    - spirit
+# locate_card:
+#   keys:
+#     - all
+#     - decks
+#     - empire_deck
+#     - destiny_deck
+#     - hand
+# play:
+#   keys:
+#     - inplay
+#     - field
+#     - districts
+# discard:
+#   keys:
+#     - enemy
+#     - ally
+# create:
+#   keys:
+#     - enemy
+#     - ally

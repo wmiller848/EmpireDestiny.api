@@ -1,0 +1,57 @@
+# knights_of_ne.0
+- Name: "Footman"
+  Image: "data/img/footman.png"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - personaility
+  TraitExps:
+    - Exp: bow | cost:1 | damage:1
+      Targets: personaility
+      Name: Swing
+      Description:
+# knights_of_ne.1
+- Name: "Priest"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - personaility
+    - devinity
+  TraitExps:
+    - Exp: bow | cost:4 | pick:enemy | kill
+      Targets: personaility
+      Name: Sacrafice
+      Description: Kill any {{Targets}}
+- Name: "Knight"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - personaility
+    - devinity
+  TraitExps:
+    - Exp: bow | cost:1 | damage:2
+      Targets: personaility
+      Name: Lance
+      Description: Deals 2 damage to {{Targets}}
+    - Exp: cost:2 | spawn:1/1/1 | play
+      Targets: none
+      Name: Holy Ghost
+      Description: Summon 1/1/1 '{{Name}}'
+- Name: "Barracks"
+  Props:
+    cost: 2
+    attackforce: 10
+    lifeforce: 25
+  Tags:
+    - structure
+  TraitExps:
+    - Exp: bow | cost:1 | damage:2
+      Targets: personaility
+      Name: Lance
+      Description: Deals 2 damage to {{Targets}}
