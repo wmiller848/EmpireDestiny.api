@@ -32,7 +32,7 @@ func (c *Context) CreatePlayer(id string) (*player.Player, error) {
 		if err != nil {
 			return nil, err
 		}
-		fortresses := c.Game.Fortresses()
+		fortresses := c.Game.Fortresses
 		forLen := uint64(len(fortresses))
 		pick := num.Uint64() % forLen
 		crd := fortresses[pick]
@@ -51,7 +51,7 @@ func (c *Context) CreatePlayer(id string) (*player.Player, error) {
 		if err != nil {
 			return nil, err
 		}
-		gods := c.Game.Gods()
+		gods := c.Game.Gods
 		godLen := uint64(len(gods))
 		pick := num.Uint64() % godLen
 		crd := gods[pick]
@@ -63,7 +63,7 @@ func (c *Context) CreatePlayer(id string) (*player.Player, error) {
 	}
 	next = cardsGiven + 50
 	for cardsGiven < next {
-		for _, dck := range c.Game.TwinDecks() {
+		for _, dck := range c.Game.TwinDecks {
 			max := big.NewInt(10000)
 			num, err := rand.Int(rand.Reader, max)
 			if err != nil {
@@ -81,7 +81,7 @@ func (c *Context) CreatePlayer(id string) (*player.Player, error) {
 
 	next = cardsGiven + 50
 	for cardsGiven < next {
-		for _, dck := range c.Game.TwinDecks() {
+		for _, dck := range c.Game.TwinDecks {
 			max := big.NewInt(10000)
 			num, err := rand.Int(rand.Reader, max)
 			if err != nil {

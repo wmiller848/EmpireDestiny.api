@@ -16,6 +16,91 @@ import (
 
 var global context.Global
 
+func ensure_users() {
+
+}
+
+func ensure_auth_sessions() {
+
+}
+
+func ensure_cards() {
+
+}
+
+func ensure_matches() {
+
+}
+
+func ensure_tables(session *rethink.Session) {
+	cursor, err := rethink.TableList().Run(session)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	tables := []interface{}{}
+	err = cursor.All(&tables)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	tablesMap := make(map[string]bool)
+	for _, db := range tables {
+		tablesMap[db.(string)] = true
+	}
+	if !tablesMap["ed"] {
+		_, err := rethink.TableCreate("users").RunWrite(session)
+		if err != nil {
+			fmt.Print(err.Error())
+			return
+		}
+	}
+}
+
+func ensure_db(session *rethink.Session) {
+	cursor, err := rethink.DBList().Run(session)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	dbs := []interface{}{}
+	err = cursor.All(&dbs)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	dbsMap := make(map[string]bool)
+	for _, db := range dbs {
+		dbsMap[db.(string)] = true
+	}
+	if !dbsMap["ed"] {
+		_, err := rethink.DBCreate("ed").RunWrite(session)
+		if err != nil {
+			fmt.Print(err.Error())
+			return
+		}
+	}
+}
+
+func setup() {
+	rethinkSession, err := rethink.Connect(rethink.ConnectOpts{
+		Address: "localhost:28015",
+		// Addresses: []string{"localhost:28015", "localhost:28016"},
+		// Database: "test",
+		// AuthKey:       "14daak1cad13dj",
+		DiscoverHosts: true,
+		// Timeout:       1 * time.Second,
+		// MaxIdle:       100,
+		// MaxOpen:       100,
+	})
+	if err != nil {
+		log.Fatalln(err.Error())
+		return
+	}
+	ensure_db(rethinkSession)
+	ensure_tables(rethinkSession)
+}
+
 func start() {
 	rethinkSession, err := rethink.Connect(rethink.ConnectOpts{
 		Address: "localhost:28015",
@@ -76,6 +161,8 @@ func start() {
 }
 
 func main() {
+
+	//setup()
 	go start()
 	rootRouter := web.New(context.Context{}). // Create your router
 							Middleware(web.LoggerMiddleware). // included logging middleware

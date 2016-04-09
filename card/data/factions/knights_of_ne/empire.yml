@@ -1,4 +1,4 @@
-# knights_of_ne.0
+# knights_of_ne.
 - Name: "Footman"
   Image: "data/img/footman.png"
   Props:
@@ -8,8 +8,9 @@
   Tags:
     - personaility
   TraitExps:
-    - Exp: bow | cost:1 | damage:1
+    - Exp: charge:{cost} | bow | change:lifeforce:1
       Targets: personaility
+      MaxTargets: 1
       Name: Swing
       Description:
 # knights_of_ne.1

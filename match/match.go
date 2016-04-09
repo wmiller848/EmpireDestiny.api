@@ -6,6 +6,7 @@ import (
 
 	"github.com/wmiller848/EmpireDestiny/card"
 	"github.com/wmiller848/EmpireDestiny/player"
+	"github.com/wmiller848/EmpireDestiny/util"
 
 	rethink "github.com/dancannon/gorethink"
 )
@@ -18,45 +19,39 @@ const conquestPhase uint32 = 4
 const buildingPhase uint32 = 5
 
 type Match struct {
-	Round     uint32
-	Phase     uint32
-	playerA   *player.Player
-	playerB   *player.Player
-	PlayerAID string
-	PlayerBID string
-	Events    map[string]map[string]*card.Card
-	Id        string
+	Round     uint32                           `Round`
+	Phase     uint32                           `Phase`
+	PlayerA   *player.Player                   `PlayerA`
+	PlayerB   *player.Player                   `PlayerB`
+	PlayerAID string                           `PlayerAID`
+	PlayerBID string                           `PlayerBID`
+	Events    map[string]map[string]*card.Card `Events`
+	Id        string                           `Id`
+	Key       string                           `Key`
 }
 
 func CreateMatch(PlayerAID, PlayerBID, id string) *Match {
+	key := util.Random(16)
 	match := &Match{
 		Round:     0,
 		Phase:     stageMatchPhase,
 		PlayerAID: PlayerAID,
 		PlayerBID: PlayerBID,
 		Id:        id,
+		Key:       util.Hex(key),
 	}
 	return match
 }
 
-func (m *Match) PlayerA() *player.Player {
-	return m.playerA
-}
-
-func (m *Match) PlayerB() *player.Player {
-	return m.playerB
-}
-
 func (m *Match) LoadPlayers(session *rethink.Session) error {
-	pdbA := player.CreatePlayerAccount(m.PlayerAID)
-	var err error
-	m.playerA, err = pdbA.LoadPlayer("Default", session)
+	pdbA, err := player.LoadPlayerAccount(m.PlayerAID, session)
+	m.PlayerA, err = pdbA.LoadPlayer("Default", session)
 	if err != nil {
 		return err
 	}
 
-	pdbB := player.CreatePlayerAccount(m.PlayerBID)
-	m.playerB, err = pdbB.LoadPlayer("Default", session)
+	pdbB, err := player.LoadPlayerAccount(m.PlayerBID, session)
+	m.PlayerB, err = pdbB.LoadPlayer("Default", session)
 	if err != nil {
 		return err
 	}
@@ -76,13 +71,13 @@ func (m *Match) PlayRound(playerAMove, playerBMove *player.Move) error {
 	if m.Round%2 == 0 {
 		attackerMove = playerAMove
 		// defenderMove = playerBMove
-		attackingPlayer = m.playerA
-		defendingPlayer = m.playerB
+		attackingPlayer = m.PlayerA
+		defendingPlayer = m.PlayerB
 	} else {
 		attackerMove = playerBMove
 		// defenderMove = playerAMove
-		attackingPlayer = m.playerB
-		defendingPlayer = m.playerA
+		attackingPlayer = m.PlayerB
+		defendingPlayer = m.PlayerA
 	}
 
 	if attackingPlayer == nil || attackerMove == nil || defendingPlayer == nil {
@@ -112,8 +107,8 @@ func (m *Match) PlayRound(playerAMove, playerBMove *player.Move) error {
 
 func (m *Match) prepareMatchPhase() {
 	//
-	m.playerA.Shuffle()
-	m.playerB.Shuffle()
+	m.PlayerA.Shuffle()
+	m.PlayerB.Shuffle()
 }
 
 func (m *Match) endMatchPhase() {

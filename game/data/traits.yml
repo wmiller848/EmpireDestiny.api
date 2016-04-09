@@ -1,21 +1,38 @@
 ##
 ##
 credit:
-  tags:
-    - all
-    - enemy
-    - ally
   effect:
     - change:gold:$1
 ##
 ##
 charge:
-  tags:
-    - all
-    - enemy
-    - ally
+  effect:
+    - change:gold:-$1
+##
+##
+bow:
+  effect:
+    - bow
+##
+##
+spawn:
   effect:
     - chage:gold:-$1
+##
+##
+kill:
+  effect:
+    - discard:graveyard
+##
+##
+discard:
+  effect:
+    - discard:void
+##
+##
+change:
+  effect:
+    - update:$prop:$value
 # ##
 # ##
 # armor_aura:

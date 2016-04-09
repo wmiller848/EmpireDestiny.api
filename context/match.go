@@ -16,15 +16,17 @@ import (
 
 type EnemyRsp struct {
 	Field    card.Deck
+	Home     card.Deck
 	Destrict card.Deck
 	God      card.Card
 	Fortress card.Card
 }
 
 type PlayerRsp struct {
-	Empire   card.Deck
-	Destiny  card.Deck
+	Empire   card.HiddenDeck
+	Destiny  card.HiddenDeck
 	Field    card.Deck
+	Home     card.Deck
 	Destrict card.Deck
 	Hand     card.Deck
 	God      card.Card
@@ -65,8 +67,6 @@ func (c *MatchContext) GetMatch(rw web.ResponseWriter, req *web.Request) {
 	}
 	fmt.Println("GetMatch", err.Error())
 	// deckid := req.PathParams["deckid"]
-	//
-	//
 	plr, err := player.LoadPlayerAccount(c.playerid, c.Session)
 	if err != nil {
 		fmt.Println("GetMatch", err.Error())
@@ -103,7 +103,9 @@ func (c *MatchContext) GetMatch(rw web.ResponseWriter, req *web.Request) {
 		session.Lock()
 		_, err = c.GetMatchInstance(c.sessionid)
 		if err != nil {
-			c.SetMatchInstance(match.CreateMatch(session.PlayerA.Id, session.PlayerB.Id, session.Sessionid))
+			mtch := match.CreateMatch(session.PlayerA.Id, session.PlayerB.Id, session.Sessionid)
+			mtch.LoadPlayers(c.Session)
+			c.SetMatchInstance(mtch)
 		}
 		session.Unlock()
 		runtime.Gosched()
@@ -126,21 +128,21 @@ func (c *MatchContext) GetInfo(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	err = mtch.LoadPlayers(c.Session)
-	if err != nil {
-		fmt.Println(err.Error())
-		rw.WriteHeader(http.StatusNotFound)
-		return
-	}
+	//err = mtch.LoadPlayers(c.Session)
+	//if err != nil {
+	//fmt.Println(err.Error())
+	//rw.WriteHeader(http.StatusNotFound)
+	//return
+	//}
 
 	var plr *player.Player
 	var enemy *player.Player
-	if mtch.PlayerA().Id == c.playerid {
-		plr = mtch.PlayerA()
-		enemy = mtch.PlayerB()
+	if mtch.PlayerAID == c.playerid {
+		plr = mtch.PlayerA
+		enemy = mtch.PlayerB
 	} else {
-		plr = mtch.PlayerB()
-		enemy = mtch.PlayerA()
+		plr = mtch.PlayerB
+		enemy = mtch.PlayerA
 	}
 
 	fmt.Println(plr, enemy)
@@ -149,20 +151,21 @@ func (c *MatchContext) GetInfo(rw web.ResponseWriter, req *web.Request) {
 	rsp["Session"] = c.sessionid
 	rsp["Enemy"] = EnemyRsp{
 		Field:    enemy.Field,
+		Home:     enemy.Home,
 		Destrict: enemy.District,
 		God:      enemy.Deck.GodCard,
 		Fortress: enemy.Deck.FortressCard,
 	}
 	empire, destiny := plr.Cards()
 	rsp["Player"] = PlayerRsp{
-		Field:    plr.Hand,
+		Field:    plr.Field,
+		Home:     plr.Home,
 		Destrict: plr.District,
 		God:      plr.Deck.GodCard,
 		Fortress: plr.Deck.FortressCard,
-		Empire:   empire,
-		Destiny:  destiny,
-		// Hand:     plr.Hand(),
-		// Gold:     plr.Gold(),
+		Empire:   empire.ToHiddenDeck(mtch.Key),
+		Destiny:  destiny.ToHiddenDeck(mtch.Key),
+		Hand:     plr.Hand,
 	}
 	fmt.Println(rsp)
 	d, err := json.Marshal(rsp)

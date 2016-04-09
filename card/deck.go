@@ -1,15 +1,51 @@
 package card
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"fmt"
 	"io/ioutil"
+
+	"github.com/wmiller848/EmpireDestiny/util"
 
 	"gopkg.in/yaml.v2"
 )
 
+type HiddenDeck []*HiddenCard
+
 type Deck []*Card
 
-func (d *Deck) Shuffle() {
+func (d Deck) Shuffle() {
 
+}
+
+func (d Deck) ToHiddenDeck(key string) HiddenDeck {
+	cypher, err := aes.NewCipher([]byte(key))
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	hiddenEmpire := make(HiddenDeck, len(d))
+	for i, crd := range d {
+		nonce := util.Random(aes.BlockSize)
+		encrypter := cipher.NewCFBEncrypter(cypher, nonce)
+		crdId := []byte(crd.Id)
+		encrypted := make([]byte, len(crdId))
+		encrypter.XORKeyStream(encrypted, crdId)
+		hiddenEmpire[i] = &HiddenCard{
+			Nonce: util.Hex(nonce),
+			Id:    util.Hex(encrypted),
+		}
+	}
+	return hiddenEmpire
+}
+
+func (d Deck) Next() *Card {
+	l := len(d)
+	if l > 0 {
+		return d[l-1]
+	} else {
+		return nil
+	}
 }
 
 type TraitExp struct {

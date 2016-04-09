@@ -1,6 +1,7 @@
 package player
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -17,10 +18,10 @@ func (m *Move) CardsToPlay() []string {
 }
 
 type DeckRef struct {
-	EmpireDeck   []int32
-	DestinyDeck  []int32
-	FortressCard int32
-	GodCard      int32
+	EmpireDeck   []int32 `EmpireDeck`
+	DestinyDeck  []int32 `DestinyDeck`
+	FortressCard int32   `FortressCard`
+	GodCard      int32   `GodCard`
 }
 
 type PlayerAccount struct {
@@ -68,28 +69,15 @@ func (p *PlayerAccount) Save(session *rethink.Session) error {
 }
 
 func (p *PlayerAccount) LoadPlayer(deck string, session *rethink.Session) (*Player, error) {
-	// cursor, err := rethink.DB("ed").Table("players").Get(p.Id).Run(session)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// defer cursor.Close()
-	// suc := cursor.One(&pdb)
-	// fmt.Println("LoadPlayer", suc, pdb)
-	// dck := card.GetDeckFromIds(plr.Deck(deckid))
-	// dck := card.GetDeckFromIds(plr.Deck(deckid))
-	// p.deckName = dck.Name()
-	// p.deck = &Deck{}
 	dck := Deck{
 		EmpireDeck:  card.Deck{},
 		DestinyDeck: card.Deck{},
 	}
+
+	jsn, _ := json.Marshal(p)
+	fmt.Println(deck, string(jsn))
 	for _, crdIndex := range p.Decks[deck].EmpireDeck {
-		// crdInstance := card.CreateEmpireCard(crd, armor int32, life int32, tags []string, traitExps []card.TraitExp, name string)
-		// dck.EmpireDeck = append(dck.EmpireDeck, crdInstance)
 		crd := p.Cards[crdIndex]
-		// fmt.Println("LoadPlayer", crd)
-		// index := make(map[string]interface{})
-		// index["index"] = "CardId"
 		cursor, err := rethink.DB("ed").Table("cards").GetAllByIndex("CardId", crd).Run(session)
 		if err != nil {
 			return nil, err
@@ -98,20 +86,32 @@ func (p *PlayerAccount) LoadPlayer(deck string, session *rethink.Session) (*Play
 			return nil, errors.New("CardId not found")
 		}
 		crdRev := card.CardRevision{}
-		// crdInstance := make(map[string]interface{})
 		err = cursor.One(&crdRev)
 		if err != nil {
 			return nil, err
 		}
 		cursor.Close()
-		// 	suc := res.Next(&crdInstance)
-		// fmt.Println("LoadPlayer", crdInstance)
 		dck.EmpireDeck = append(dck.EmpireDeck, crdRev.Card)
 	}
-	// for _, crdIndex := range pdb.Decks[deck].DestinyDeck {
-	// 	crd := pdb.Cards[crdIndex]
-	// 	fmt.Println(crd)
-	// }
+
+	for _, crdIndex := range p.Decks[deck].DestinyDeck {
+		crd := p.Cards[crdIndex]
+		cursor, err := rethink.DB("ed").Table("cards").GetAllByIndex("CardId", crd).Run(session)
+		if err != nil {
+			return nil, err
+		}
+		if cursor.IsNil() {
+			return nil, errors.New("CardId not found")
+		}
+		crdRev := card.CardRevision{}
+		err = cursor.One(&crdRev)
+		if err != nil {
+			return nil, err
+		}
+		cursor.Close()
+		dck.DestinyDeck = append(dck.DestinyDeck, crdRev.Card)
+	}
+
 	plr := CreatePlayer(p.Id)
 	plr.Deck = &dck
 	return plr, nil
@@ -138,6 +138,7 @@ type Player struct {
 	Deck     *Deck     `Deck`
 	Hand     card.Deck `Hand`
 	Field    card.Deck `Field`
+	Home     card.Deck `Home`
 	District card.Deck `District`
 	Gold     int32     `Gold`
 }
@@ -147,6 +148,7 @@ func CreatePlayer(id string) *Player {
 		Id:       id,
 		Hand:     card.Deck{},
 		Field:    card.Deck{},
+		Home:     card.Deck{},
 		District: card.Deck{},
 		Deck:     &Deck{},
 	}

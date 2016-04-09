@@ -1,11 +1,16 @@
 - Name: "Word of The Lord"
   Props:
-    cost: 2
+    cost: 3
+    llama: 'bob'
   Tags:
     - avatar
   TraitExps:
     - Exp: damage:2 | discard
       Targets: personaility
+      Name: Sacrafice
+      Description: Damage any {{Targets}}
+    - Exp: bow
+      Targets: deamon:enemy
       Name: Sacrafice
       Description: Damage any {{Targets}}
 - Name: "Thrust of the Tiger"
@@ -15,7 +20,7 @@
     - avatar
   TraitExps:
     ## blow up card and discard
-    - Exp: consume:1 | pick:enemy | kill | discard
+    - Exp: consume:${cost} | pick:enemy | kill | discard
       Targets: personaility
       Name: Sacrafice
       Description: Kill any {{Targets}}
